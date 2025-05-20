@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel de Solicitações</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    nav {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #007bff;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+    button {
+      padding: 5px 10px;
+      background-color: green;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: darkgreen;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">Cadastro</a> | 
+    <a href="listar.html">Listar</a> | 
+    <a href="config.html">Configurações</a> | 
+    <a href="solicitar_coleta.html">Solicitar Coleta</a> |
+    <a href="ver_solicitacoes.html">Ver Solicitações</a>
+  </nav>
+
+  <h1>Solicitações de Coleta</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nota Fiscal</th>
+        <th>Valor</th>
+        <th>Volumes</th>
+        <th>Peso</th>
+        <th>Data Coleta</th>
+        <th>Endereço Coleta</th>
+        <th>Destino</th>
+        <th>Solicitante</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="tabela-solicitacoes"></tbody>
+  </table>
+
+  <!-- Firebase e Firestore SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Configuração Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDLWxYdH3WQ3bUGl82NfqRYRZuQ2uYaqM4",
+      authDomain: "solicitar-e8437.firebaseapp.com",
+      projectId: "solicitar-e8437",
+      storageBucket: "solicitar-e8437.appspot.com",
+      messagingSenderId: "386801085632",
+      appId: "1:386801085632:web:420f2d66c64f864ca55125"
+    };
+
+    // Inicialização Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const tbody = document.getElementById('tabela-solicitacoes');
+
+    function carregarSolicitacoes() {
+      db.collection("solicitacoes").onSnapshot((snapshot) => {
+        tbody.innerHTML = '';
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${data.nota_fiscal}</td>
+            <td>R$ ${parseFloat(data.valor_nota).toFixed(2)}</td>
+            <td>${data.quantidade_volume}</td>
+            <td>${data.peso} kg</td>
+            <td>${data.data_coleta}</td>
+            <td>${data.endereco_coleta}</td>
+            <td>${data.endereco_destino}</td>
+            <td>${data.solicitante || '-'}</td>
+            <td>${data.status}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    carregarSolicitacoes();
+  </script>
+</body>
+</html>
